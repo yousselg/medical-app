@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.medical</groupId>
+    <artifactId>medical-blog</artifactId>
+    <version>${revision}</version>
+    <packaging>jar</packaging>
+
+    <name>medical-blog</name>
+    <description>Demo project for Spring Boot</description>
+
+    <parent>
+        <groupId>com.medical</groupId>
+        <artifactId>medical-app</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.medical</groupId>
+            <artifactId>medical-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
