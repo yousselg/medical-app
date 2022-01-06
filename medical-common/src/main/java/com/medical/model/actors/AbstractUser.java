@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Set;
 
 @Data
 @Entity
@@ -37,5 +37,5 @@ public abstract class AbstractUser {
 
     private String providerId;
 
-    public abstract Collection<Role> getRoles();
+    public abstract Set<Role> getRoles();
 }

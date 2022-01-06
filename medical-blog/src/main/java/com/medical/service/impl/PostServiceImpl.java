@@ -1,5 +1,6 @@
 package com.medical.service.impl;
 
+import com.medical.exception.ResourceNotFoundException;
 import com.medical.model.blog.Comment;
 import com.medical.model.blog.Post;
 import com.medical.repository.PostRepository;
@@ -24,7 +25,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Post findById(final Long id) {
-        return this.repository.findById(id).orElseThrow();
+        return this.repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Post addComment(final Long postId, final Comment comment) {
-        final Post post = this.repository.findById(postId).orElseThrow();
+        final Post post = this.repository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId.toString()));
         post.getComments().add(comment);
         comment.setPost(post);
         return this.repository.save(post);

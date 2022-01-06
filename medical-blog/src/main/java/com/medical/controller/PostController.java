@@ -1,7 +1,7 @@
 package com.medical.controller;
 
+import com.medical.dto.ApiResponse;
 import com.medical.dto.PostDto;
-import com.medical.dto.payload.ApiResponse;
 import com.medical.mapper.CommentMapper;
 import com.medical.mapper.PostMapper;
 import com.medical.model.actors.Doctor;

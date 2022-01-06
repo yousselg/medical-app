@@ -1,4 +1,4 @@
-package com.medical.dto.payload;
+package com.medical.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

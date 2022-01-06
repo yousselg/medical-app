@@ -1,12 +1,13 @@
 package com.medical.controller;
 
-import com.medical.dto.payload.ApiResponse;
+import com.medical.dto.ApiResponse;
 import com.medical.dto.payload.AuthResponse;
 import com.medical.dto.payload.LoginRequest;
 import com.medical.dto.payload.SignUpRequest;
 import com.medical.exception.BadRequestException;
 import com.medical.model.AuthProvider;
 import com.medical.model.actors.AbstractUser;
+import com.medical.model.actors.Role;
 import com.medical.model.actors.UserFactory;
 import com.medical.repository.UserRepository;
 import com.medical.security.TokenProvider;
@@ -63,7 +64,9 @@ public class AuthController {
         if (this.userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new BadRequestException("Email address already in use.");
         }
-
+        if (signUpRequest.getRole() == Role.ROLE_ADMIN) {
+            throw new BadRequestException("You cannot create an ADMIN user");
+        }
         // Creating user's account
         final AbstractUser user = UserFactory.createUser(signUpRequest.getRole());
         user.setName(signUpRequest.getName());
