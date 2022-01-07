@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * @author Chinna
+ * @author yousselg
  */
 public class LocalUser extends User implements OAuth2User, OidcUser {
 

@@ -3,11 +3,12 @@ package com.medical.dto;
 import com.medical.validator.PasswordMatches;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 /**
- * @author Chinna
+ * @author yousselg
  * @since 26/3/18
  */
 @Data
@@ -22,6 +23,7 @@ public class SignUpRequest {
     private String displayName;
 
     @NotEmpty
+    @Email
     private String email;
 
     private SocialProvider socialProvider;

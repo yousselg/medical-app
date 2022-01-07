@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Chinna
+ * @author yousselg
  */
 @Service("localUserDetailService")
 public class LocalUserDetailService implements UserDetailsService {

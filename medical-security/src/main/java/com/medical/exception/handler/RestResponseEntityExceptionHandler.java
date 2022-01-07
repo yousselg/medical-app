@@ -23,16 +23,19 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status,
                                                                   final WebRequest request) {
-		this.logger.error("400 Status Code", ex);
+        this.logger.error("400 Status Code", ex);
         final BindingResult result = ex.getBindingResult();
 
         final String error = result.getAllErrors().stream().map(e -> {
             if (e instanceof FieldError) {
-                return ((FieldError) e).getField() + " : " + e.getDefaultMessage();
+                return new StringBuilder(((FieldError) e).getField()).append(" : ")
+                        .append(e.getDefaultMessage()).toString();
             } else {
-                return e.getObjectName() + " : " + e.getDefaultMessage();
+                return new StringBuilder(e.getObjectName()).append(" : ")
+                        .append(e.getDefaultMessage()).toString();
             }
         }).collect(Collectors.joining(", "));
-        return this.handleExceptionInternal(ex, new ApiResponse(false, error), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return this.handleExceptionInternal(ex, new ApiResponse(false, error),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

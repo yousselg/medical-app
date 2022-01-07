@@ -1,7 +1,7 @@
 package com.medical.dto;
 
 /**
- * @author Chinna
+ * @author yousselg
  * @since 26/3/18
  */
 public enum SocialProvider {
