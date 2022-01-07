@@ -1,6 +1,6 @@
 package com.medical.model.blog;
 
-import com.medical.model.actors.Doctor;
+import com.medical.model.actors.User;
 import lombok.Data;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.validator.constraints.Length;
@@ -46,8 +46,8 @@ public class Post {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "doctor_id", referencedColumnName = "id", nullable = false)
-    private Doctor doctor;
+    @JoinColumn(nullable = false)
+    private User doctor;
 
     @PrePersist
     public void prePersist() {

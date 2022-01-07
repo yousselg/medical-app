@@ -1,6 +1,6 @@
 package com.medical.model.blog;
 
-import com.medical.model.actors.AbstractUser;
+import com.medical.model.actors.User;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -30,13 +30,13 @@ public class Comment {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id", nullable = false)
+    @JoinColumn(nullable = false)
     private Post post;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private AbstractUser user;
+    @JoinColumn(nullable = false)
+    private User user;
 
     @PrePersist
     public void prePersist() {

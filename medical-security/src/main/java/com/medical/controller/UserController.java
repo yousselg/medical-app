@@ -1,32 +1,22 @@
 package com.medical.controller;
 
-import com.medical.dto.UserDto;
-import com.medical.exception.ResourceNotFoundException;
-import com.medical.mapper.UserMapper;
-import com.medical.repository.UserRepository;
-import com.medical.security.CurrentUser;
-import com.medical.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.medical.config.CurrentUser;
+import com.medical.dto.LocalUser;
+import com.medical.util.GeneralUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
-    public UserDto getCurrentUser(@ApiIgnore @CurrentUser final UserPrincipal userPrincipal) {
-        return this.userRepository.findById(userPrincipal.getId()).map(this.userMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId().toString()));
+    public ResponseEntity<?> getCurrentUser(@CurrentUser final LocalUser user) {
+        return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
     }
 
     @GetMapping("/all")
@@ -51,5 +41,4 @@ public class UserController {
     public ResponseEntity<?> getModeratorContent() {
         return ResponseEntity.ok("Moderator content goes here");
     }
-
 }

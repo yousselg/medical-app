@@ -1,13 +1,13 @@
 package com.medical.controller;
 
+import com.medical.config.CurrentUser;
 import com.medical.dto.ApiResponse;
+import com.medical.dto.LocalUser;
 import com.medical.dto.PostDto;
 import com.medical.mapper.CommentMapper;
 import com.medical.mapper.PostMapper;
-import com.medical.model.actors.Doctor;
+import com.medical.model.actors.Role;
 import com.medical.model.blog.Post;
-import com.medical.security.CurrentUser;
-import com.medical.security.UserPrincipal;
 import com.medical.service.ICommentService;
 import com.medical.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,27 +47,27 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody final PostDto postDto, @ApiIgnore @CurrentUser final UserPrincipal userPrincipal) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody final PostDto postDto, @ApiIgnore @CurrentUser final LocalUser userPrincipal) {
         return this.saveOrUpdatePost(postDto, userPrincipal);
     }
 
     @PutMapping
     @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<ApiResponse> update(@Valid @RequestBody final PostDto postDto, @ApiIgnore @CurrentUser final UserPrincipal userPrincipal) {
+    public ResponseEntity<ApiResponse> update(@Valid @RequestBody final PostDto postDto, @ApiIgnore @CurrentUser final LocalUser userPrincipal) {
         return this.saveOrUpdatePost(postDto, userPrincipal);
     }
 
-    private ResponseEntity<ApiResponse> saveOrUpdatePost(final PostDto postDto, final UserPrincipal userPrincipal) {
+    private ResponseEntity<ApiResponse> saveOrUpdatePost(final PostDto postDto, final LocalUser userPrincipal) {
         final Post post = this.mapper.toModel(postDto);
-        post.setDoctor((Doctor) userPrincipal.getUser());
+        post.setDoctor(userPrincipal.getUser());
         return ResponseEntity.ok(new ApiResponse<>(true, this.mapper.toDto(this.service.save(post))));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<ApiResponse> delete(@PathVariable final Long id, @ApiIgnore @CurrentUser final UserPrincipal userPrincipal) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable final Long id, @ApiIgnore @CurrentUser final LocalUser userPrincipal) {
         final Post post = this.service.findById(id);
-        if (userPrincipal.getUser() instanceof Doctor && post.getDoctor().equals(userPrincipal.getUser())) {
+        if (userPrincipal.getUser().getRoles().stream().anyMatch(Role.ROLE_DOCTOR::equals) && post.getDoctor().equals(userPrincipal.getUser())) {
             return ResponseEntity.ok(new ApiResponse<>(true, "Post has been deleted"));
         }
         return ResponseEntity.ok(new ApiResponse<>(false, "You cannot delete other's posts"));

@@ -1,15 +1,23 @@
 package com.medical;
 
-import com.medical.config.AppProperties;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
-@EnableConfigurationProperties(AppProperties.class)
-public class MedicalApplication {
+@SpringBootApplication(scanBasePackages = "com.medical")
+@EnableJpaRepositories
+@EnableTransactionManagement
+public class MedicalApplication extends SpringBootServletInitializer {
 
     public static void main(final String[] args) {
-        SpringApplication.run(MedicalApplication.class, args);
+        final SpringApplicationBuilder app = new SpringApplicationBuilder(MedicalApplication.class);
+        app.run();
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(final SpringApplicationBuilder application) {
+        return application.sources(MedicalApplication.class);
     }
 }

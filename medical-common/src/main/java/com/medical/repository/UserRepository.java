@@ -1,16 +1,14 @@
 package com.medical.repository;
 
-import com.medical.model.actors.AbstractUser;
+import com.medical.model.actors.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface UserRepository extends JpaRepository<AbstractUser, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<AbstractUser> findByEmail(String email);
+    User findByEmail(String email);
 
-    Boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 
 }

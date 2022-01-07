@@ -1,87 +1,67 @@
 package com.medical.security.oauth2;
 
+import com.medical.dto.SocialProvider;
 import com.medical.exception.OAuth2AuthenticationProcessingException;
-import com.medical.model.AuthProvider;
-import com.medical.model.actors.AbstractUser;
-import com.medical.model.actors.Role;
-import com.medical.model.actors.UserFactory;
-import com.medical.repository.UserRepository;
-import com.medical.security.UserPrincipal;
-import com.medical.security.oauth2.user.OAuth2UserInfo;
-import com.medical.security.oauth2.user.OAuth2UserInfoFactory;
+import com.medical.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
+    @Autowired
+    private Environment env;
 
     @Override
     public OAuth2User loadUser(final OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         final OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
-
         try {
-            return this.processOAuth2User(oAuth2UserRequest, oAuth2User);
+            final Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
+            final String provider = oAuth2UserRequest.getClientRegistration().getRegistrationId();
+            if (provider.equals(SocialProvider.LINKEDIN.getProviderType())) {
+				this.populateEmailAddressFromLinkedIn(oAuth2UserRequest, attributes);
+            }
+            return this.userService.processUserRegistration(provider, attributes, null, null);
         } catch (final AuthenticationException ex) {
             throw ex;
         } catch (final Exception ex) {
-            // Throwing an instance of AuthenticationException will trigger the OAuth2AuthenticationFailureHandler
-            throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());
+            ex.printStackTrace();
+            // Throwing an instance of AuthenticationException will trigger the
+            // OAuth2AuthenticationFailureHandler
+            throw new OAuth2AuthenticationProcessingException(ex.getMessage(), ex.getCause());
         }
     }
 
-    private OAuth2User processOAuth2User(final OAuth2UserRequest oAuth2UserRequest, final OAuth2User oAuth2User) {
-        final OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
-        if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
-            throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
-        }
-
-        final Optional<AbstractUser> userOptional = this.userRepository.findByEmail(oAuth2UserInfo.getEmail());
-        AbstractUser user;
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-            if (!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
-                throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.getProvider() + " account. Please use your " + user.getProvider() +
-                        " account to login.");
-            }
-            user = this.updateExistingUser(user, oAuth2UserInfo);
-        } else {
-            user = this.registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
-        }
-
-        return UserPrincipal.create(user, oAuth2User.getAttributes());
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public void populateEmailAddressFromLinkedIn(final OAuth2UserRequest oAuth2UserRequest, final Map<String, Object> attributes) throws OAuth2AuthenticationException {
+        final String emailEndpointUri = this.env.getProperty("linkedin.email-address-uri");
+        Assert.notNull(emailEndpointUri, "LinkedIn email address end point required");
+        final RestTemplate restTemplate = new RestTemplate();
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + oAuth2UserRequest.getAccessToken().getTokenValue());
+        final HttpEntity<?> entity = new HttpEntity<>("", headers);
+        final ResponseEntity<Map> response = restTemplate.exchange(emailEndpointUri, HttpMethod.GET, entity, Map.class);
+        final List<?> list = (List<?>) response.getBody().get("elements");
+        final Map map = (Map<?, ?>) ((Map<?, ?>) list.get(0)).get("handle~");
+        attributes.putAll(map);
     }
-
-    private AbstractUser registerNewUser(final OAuth2UserRequest oAuth2UserRequest, final OAuth2UserInfo oAuth2UserInfo) {
-        final AbstractUser user = UserFactory.createUser(Role.ROLE_USER);
-        user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setProviderId(oAuth2UserInfo.getId());
-        user.setName(oAuth2UserInfo.getName());
-        user.setEmail(oAuth2UserInfo.getEmail());
-        user.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return this.userRepository.save(user);
-    }
-
-    private AbstractUser updateExistingUser(final AbstractUser existingUser, final OAuth2UserInfo oAuth2UserInfo) {
-        if (existingUser.getName().equals(oAuth2UserInfo.getName())
-                && existingUser.getImageUrl().equals(oAuth2UserInfo.getImageUrl())) {
-            return existingUser;
-        }
-        existingUser.setName(oAuth2UserInfo.getName());
-        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return this.userRepository.save(existingUser);
-    }
-
 }

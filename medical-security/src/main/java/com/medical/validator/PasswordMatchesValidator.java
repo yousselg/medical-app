@@ -1,7 +1,6 @@
 package com.medical.validator;
 
-
-import com.medical.dto.payload.SignUpRequest;
+import com.medical.dto.SignUpRequest;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
