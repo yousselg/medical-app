@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,6 +23,8 @@ public class PostDto implements Serializable {
     private LocalDateTime creationDateTime;
     private LocalDateTime lastModificationDateTime;
     private Collection<CommentDto> comments;
+    private Set<CategoryDto> categories;
+    private Set<TagDto> tags;
     private Long likes;
     private DoctorDto doctor;
 }

@@ -1,4 +1,4 @@
-package com.medical.config;
+package com.medical.config.dataloader;
 
 import com.medical.dto.SocialProvider;
 import com.medical.model.actors.Role;
@@ -6,8 +6,6 @@ import com.medical.model.actors.User;
 import com.medical.repository.RoleRepository;
 import com.medical.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Component
-public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
-
-    private boolean alreadySetup = false;
+public class UserRoleDataLoader {
 
     @Autowired
     private UserRepository userRepository;
@@ -29,22 +25,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Override
     @Transactional
-    public void onApplicationEvent(final ContextRefreshedEvent event) {
-        if (this.alreadySetup) {
-            return;
-        }
-        // Create initial roles
-        final Role userRole = this.createRoleIfNotFound(Role.ROLE_USER);
-        final Role adminRole = this.createRoleIfNotFound(Role.ROLE_ADMIN);
-        final Role modRole = this.createRoleIfNotFound(Role.ROLE_DOCTOR);
-        this.createUserIfNotFound("admin@javachinna.com", Set.of(userRole, adminRole, modRole));
-        this.alreadySetup = true;
-    }
-
-    @Transactional
-    private final User createUserIfNotFound(final String email, final Set<Role> roles) {
+    public User createUserIfNotFound(final String email, final Set<Role> roles) {
         User user = this.userRepository.findByEmail(email);
         if (user == null) {
             user = new User();
@@ -63,7 +45,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    private final Role createRoleIfNotFound(final String name) {
+    public Role createRoleIfNotFound(final String name) {
         Role role = this.roleRepository.findByName(name);
         if (role == null) {
             role = this.roleRepository.save(new Role(name));

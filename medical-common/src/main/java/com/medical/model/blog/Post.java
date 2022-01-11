@@ -10,6 +10,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -49,11 +51,25 @@ public class Post {
     @JoinColumn(nullable = false)
     private User doctor;
 
+    @ManyToMany
+    @JoinTable(name = "post_categories",
+            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "category_id", referencedColumnName = "id")})
+    private Set<Category> categories = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "post_tags",
+            joinColumns = {@JoinColumn(name = "post_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")})
+    private Set<Tag> tags = new HashSet<>();
+
     @PrePersist
     public void prePersist() {
         this.creationDateTime = LocalDateTime.now();
         this.lastModificationDateTime = LocalDateTime.now();
-        this.likes = 0L;
+        if (this.likes == null) {
+            this.likes = 0L;
+        }
     }
 
     @PreUpdate

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1641903573892-1" author="youssef">
+        <createTable tableName="categories">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_categories"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1641903573892-2" author="youssef">
+        <createTable tableName="post_categories">
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_post_categories"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_post_categories"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1641903573892-3" author="youssef">
+        <createTable tableName="post_tags">
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_post_tags"/>
+            </column>
+            <column name="tag_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_post_tags"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1641903573892-4" author="youssef">
+        <createTable tableName="tag">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_tag"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1641903573892-5" author="youssef">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="post_categories"
+                                 constraintName="fk_poscat_on_category" referencedColumnNames="id"
+                                 referencedTableName="categories"/>
+    </changeSet>
+    <changeSet id="1641903573892-6" author="youssef">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="post_categories"
+                                 constraintName="fk_poscat_on_post" referencedColumnNames="id"
+                                 referencedTableName="posts"/>
+    </changeSet>
+    <changeSet id="1641903573892-7" author="youssef">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="post_tags"
+                                 constraintName="fk_post_tags_on_post" referencedColumnNames="id"
+                                 referencedTableName="posts"/>
+    </changeSet>
+    <changeSet id="1641903573892-8" author="youssef">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="post_tags" constraintName="fk_post_tags_on_tag"
+                                 referencedColumnNames="id" referencedTableName="tag"/>
+    </changeSet>
+
+</databaseChangeLog>

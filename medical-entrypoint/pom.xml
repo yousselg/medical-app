@@ -25,11 +25,6 @@
     <dependencies>
         <dependency>
             <groupId>com.medical</groupId>
-            <artifactId>medical-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.medical</groupId>
             <artifactId>medical-security</artifactId>
             <version>${project.version}</version>
         </dependency>
