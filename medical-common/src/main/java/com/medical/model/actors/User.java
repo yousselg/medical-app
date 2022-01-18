@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -41,6 +42,10 @@ public class User implements Serializable {
 
     @Column
     private String displayName;
+
+    @Column
+    @URL
+    private String imageUrl;
 
     @Column(nullable = false, updatable = false)
     protected LocalDateTime createdDateTime;

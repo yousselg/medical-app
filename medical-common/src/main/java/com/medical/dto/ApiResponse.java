@@ -5,5 +5,5 @@ import lombok.Value;
 @Value
 public class ApiResponse<T> {
     private Boolean success;
-    private T message;
+    private T payload;
 }

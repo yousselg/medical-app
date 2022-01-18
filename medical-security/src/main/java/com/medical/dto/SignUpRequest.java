@@ -22,6 +22,8 @@ public class SignUpRequest {
     @NotEmpty
     private String displayName;
 
+    private String imageUrl;
+
     @NotEmpty
     @Email
     private String email;
@@ -34,9 +36,10 @@ public class SignUpRequest {
     @NotEmpty
     private String matchingPassword;
 
-    public SignUpRequest(final String providerUserId, final String displayName, final String email, final String password, final SocialProvider socialProvider) {
+    public SignUpRequest(final String providerUserId, final String displayName, final String imageUrl, final String email, final String password, final SocialProvider socialProvider) {
         this.providerUserId = providerUserId;
         this.displayName = displayName;
+        this.imageUrl = imageUrl;
         this.email = email;
         this.password = password;
         this.socialProvider = socialProvider;
@@ -49,6 +52,7 @@ public class SignUpRequest {
     public static class Builder {
         private String providerUserID;
         private String displayName;
+        private String imageUrl;
         private String email;
         private String password;
         private SocialProvider socialProvider;
@@ -60,6 +64,11 @@ public class SignUpRequest {
 
         public Builder addDisplayName(final String displayName) {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder addImageUrl(final String imageUrl) {
+            this.imageUrl = imageUrl;
             return this;
         }
 
@@ -79,7 +88,7 @@ public class SignUpRequest {
         }
 
         public SignUpRequest build() {
-            return new SignUpRequest(this.providerUserID, this.displayName, this.email, this.password, this.socialProvider);
+            return new SignUpRequest(this.providerUserID, this.displayName, this.imageUrl, this.email, this.password, this.socialProvider);
         }
     }
 }

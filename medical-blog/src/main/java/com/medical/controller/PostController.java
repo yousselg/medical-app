@@ -4,11 +4,9 @@ import com.medical.config.CurrentUser;
 import com.medical.dto.ApiResponse;
 import com.medical.dto.LocalUser;
 import com.medical.dto.PostDto;
-import com.medical.mapper.CommentMapper;
 import com.medical.mapper.PostMapper;
 import com.medical.model.actors.Role;
 import com.medical.model.blog.Post;
-import com.medical.service.ICommentService;
 import com.medical.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,15 +26,12 @@ public class PostController {
     @Autowired
     private IPostService service;
     @Autowired
-    private ICommentService commentService;
-    @Autowired
     private PostMapper mapper;
-    @Autowired
-    private CommentMapper commentMapper;
 
     @GetMapping
-    public ResponseEntity<ApiResponse> findAll() {
-        final List<PostDto> postDtos = this.service.findAll().stream().map(this.mapper::toDto).collect(Collectors.toList());
+    public ResponseEntity<ApiResponse> findAll(@RequestParam(defaultValue = "0") final Integer page,
+                                               @RequestParam(defaultValue = "10") final Integer size) {
+        final List<PostDto> postDtos = this.service.findAll(PageRequest.of(page, size)).stream().map(this.mapper::toDto).collect(Collectors.toList());
         return ResponseEntity.ok(new ApiResponse<>(true, postDtos));
     }
 
@@ -73,12 +68,4 @@ public class PostController {
         return ResponseEntity.ok(new ApiResponse<>(false, "You cannot delete other's posts"));
     }
 
-    @GetMapping("/{id}/comments")
-    public ResponseEntity<ApiResponse> findByIdWithComments(@PathVariable final Long id,
-                                                            @RequestParam(defaultValue = "0") final Integer page,
-                                                            @RequestParam(defaultValue = "10") final Integer size) {
-        return ResponseEntity.ok(new ApiResponse<>(true,
-                this.commentMapper.toDto(
-                        this.commentService.findByPostId(id, PageRequest.of(page, size)))));
-    }
 }

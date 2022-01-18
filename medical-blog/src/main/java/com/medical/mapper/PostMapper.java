@@ -8,7 +8,7 @@ import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring",
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
-        uses = {CategoryMapper.class, CommentMapper.class, TagMapper.class})
+        uses = {CategoryMapper.class, TagMapper.class, UserMapper.class})
 public interface PostMapper {
 
     PostDto toDto(Post post);

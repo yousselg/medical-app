@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
     private User buildUser(final SignUpRequest formDTO) {
         final User user = new User();
         user.setDisplayName(formDTO.getDisplayName());
+        user.setImageUrl(formDTO.getImageUrl());
         user.setEmail(formDTO.getEmail());
         user.setPassword(this.passwordEncoder.encode(formDTO.getPassword()));
         final HashSet<Role> roles = new HashSet<>();
@@ -81,9 +82,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public LocalUser processUserRegistration(final String registrationId, final Map<String, Object> attributes, final OidcIdToken idToken, final OidcUserInfo userInfo) {
         final OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
-        if (StringUtils.isEmpty(oAuth2UserInfo.getName())) {
+        if (!StringUtils.hasText(oAuth2UserInfo.getName())) {
             throw new OAuth2AuthenticationProcessingException("Name not found from OAuth2 provider");
-        } else if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+        } else if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
         final SignUpRequest userDetails = this.toUserRegistrationObject(registrationId, oAuth2UserInfo);
@@ -103,11 +104,13 @@ public class UserServiceImpl implements UserService {
 
     private User updateExistingUser(final User existingUser, final OAuth2UserInfo oAuth2UserInfo) {
         existingUser.setDisplayName(oAuth2UserInfo.getName());
+        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
         return this.userRepository.save(existingUser);
     }
 
     private SignUpRequest toUserRegistrationObject(final String registrationId, final OAuth2UserInfo oAuth2UserInfo) {
-        return SignUpRequest.getBuilder().addProviderUserID(oAuth2UserInfo.getId()).addDisplayName(oAuth2UserInfo.getName()).addEmail(oAuth2UserInfo.getEmail())
+        return SignUpRequest.getBuilder().addProviderUserID(oAuth2UserInfo.getId()).addDisplayName(oAuth2UserInfo.getName())
+                .addImageUrl(oAuth2UserInfo.getImageUrl()).addEmail(oAuth2UserInfo.getEmail())
                 .addSocialProvider(GeneralUtils.toSocialProvider(registrationId)).addPassword("changeit").build();
     }
 

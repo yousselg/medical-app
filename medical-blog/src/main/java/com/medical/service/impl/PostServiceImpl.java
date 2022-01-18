@@ -1,11 +1,11 @@
 package com.medical.service.impl;
 
 import com.medical.exception.ResourceNotFoundException;
-import com.medical.model.blog.Comment;
 import com.medical.model.blog.Post;
 import com.medical.repository.PostRepository;
 import com.medical.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,15 +35,13 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void deleteById(final Long id) {
-        this.repository.deleteById(id);
+    public List<Post> findAll(final Pageable pageable) {
+        return StreamSupport.stream(this.repository.findAll(pageable).spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Post addComment(final Long postId, final Comment comment) {
-        final Post post = this.repository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId.toString()));
-        post.getComments().add(comment);
-        comment.setPost(post);
-        return this.repository.save(post);
+    public void deleteById(final Long id) {
+        this.repository.deleteById(id);
     }
 }

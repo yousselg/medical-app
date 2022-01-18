@@ -28,9 +28,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         // Create initial roles
         final Role userRole = this.userRoleDataLoader.createRoleIfNotFound(Role.ROLE_USER);
         final Role adminRole = this.userRoleDataLoader.createRoleIfNotFound(Role.ROLE_ADMIN);
-        final Role modRole = this.userRoleDataLoader.createRoleIfNotFound(Role.ROLE_DOCTOR);
-        this.userRoleDataLoader.createUserIfNotFound("admin@medical.com", Set.of(userRole, adminRole, modRole));
-        this.userRoleDataLoader.createUserIfNotFound("doctor@medical.com", Set.of(userRole, modRole));
+        final Role modRole = this.userRoleDataLoader.createRoleIfNotFound(Role.ROLE_MODERATOR);
+        final Role doctorRole = this.userRoleDataLoader.createRoleIfNotFound(Role.ROLE_DOCTOR);
+        this.userRoleDataLoader.createUserIfNotFound("admin@medical.com", Set.of(userRole, adminRole, modRole, doctorRole));
+        this.userRoleDataLoader.createUserIfNotFound("doctor@medical.com", Set.of(userRole, doctorRole));
+        this.userRoleDataLoader.createUserIfNotFound("moderator@medical.com", Set.of(userRole, modRole));
         this.userRoleDataLoader.createUserIfNotFound("user@medical.com", Set.of(userRole));
 
         this.alreadySetup = true;

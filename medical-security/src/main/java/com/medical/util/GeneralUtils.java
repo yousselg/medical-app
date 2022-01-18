@@ -2,7 +2,7 @@ package com.medical.util;
 
 import com.medical.dto.LocalUser;
 import com.medical.dto.SocialProvider;
-import com.medical.dto.UserInfo;
+import com.medical.dto.UserDto;
 import com.medical.model.actors.Role;
 import com.medical.model.actors.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,9 +34,9 @@ public class GeneralUtils {
         return SocialProvider.LOCAL;
     }
 
-    public static UserInfo buildUserInfo(final LocalUser localUser) {
-        final List<String> roles = localUser.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+    public static UserDto buildUserInfo(final LocalUser localUser) {
+        final Set<String> roles = localUser.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toSet());
         final User user = localUser.getUser();
-        return new UserInfo(user.getId().toString(), user.getDisplayName(), user.getEmail(), roles);
+        return new UserDto(user.getId(), user.getEmail(), user.getDisplayName(), user.getCreatedDateTime(), user.getModifiedDateTime(), roles);
     }
 }

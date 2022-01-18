@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Set;
 
 @Getter
@@ -20,11 +19,11 @@ public class PostDto implements Serializable {
     private String title;
     @NotEmpty
     private String body;
+    private String featuredImage;
     private LocalDateTime creationDateTime;
     private LocalDateTime lastModificationDateTime;
-    private Collection<CommentDto> comments;
     private Set<CategoryDto> categories;
     private Set<TagDto> tags;
     private Long likes;
-    private DoctorDto doctor;
+    private UserDto doctor;
 }

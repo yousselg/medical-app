@@ -1,4 +1,6 @@
 spring:
+  devtools:
+    add-properties: false
   datasource:
     initialization-mode: always
     platform: postgres
@@ -22,7 +24,7 @@ spring:
   security:
     oauth2:
       client:
-        registration:
+        registrat ion:
           google:
             clientId: 5014057553-8gm9um6vnli3cle5rgigcdjpdrid14m9.apps.googleusercontent.com
             clientSecret: tWZKVLxaD_ARWsriiiUFYoIk

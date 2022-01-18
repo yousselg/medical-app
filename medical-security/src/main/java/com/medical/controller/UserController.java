@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api")
@@ -15,7 +16,7 @@ public class UserController {
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getCurrentUser(@CurrentUser final LocalUser user) {
+    public ResponseEntity<?> getCurrentUser(@ApiIgnore @CurrentUser final LocalUser user) {
         return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
     }
 

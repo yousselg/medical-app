@@ -1,7 +1,7 @@
 package com.medical.service;
 
-import com.medical.model.blog.Comment;
 import com.medical.model.blog.Post;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,9 +13,8 @@ public interface IPostService {
 
     List<Post> findAll();
 
+    List<Post> findAll(Pageable pageable);
+
     void deleteById(Long id);
-
-    Post addComment(Long postId, Comment comment);
-
 
 }
