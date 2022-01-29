@@ -43,11 +43,20 @@ spring:
             non_contextual_creation: true
         database-platform: org.hibernate.dialect.PostgreSQL9Dialect
   datasource:
+    type: com.zaxxer.hikari.HikariDataSource
     initialization-mode: always
     platform: postgres
     url: jdbc:postgresql://localhost:5432/medical
     username: postgres
     password: password
+
+    hikari:
+      maxLifetime: 2000000
+      poolName: SpringBootJPAHikariCP
+      connectionTimeout: 30000
+      idleTimeout: 30000
+      minimumIdle: 5
+      maximumPoolSize: 20
 app:
   cors:
     allowedOrigins: http://localhost:4200,http://localhost:3000,http://localhost:8080

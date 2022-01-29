@@ -1,60 +1,77 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
-
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
   security:
     oauth2:
       client:
         registration:
-          google:
-            clientId: 5014057553-8gm9um6vnli3cle5rgigcdjpdrid14m9.apps.googleusercontent.com
-            clientSecret: tWZKVLxaD_ARWsriiiUFYoIk
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - profile
+          linkedin:
+            clientSecret: <your-client-secret>
+            provider: linkedin
+            client-name: Linkedin
+            clientId: <your-client-id>
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            authorization-grant-type: authorization_code
+            scope: r_liteprofile, r_emailaddress
+            client-authentication-method: post
           facebook:
-            clientId: 121189305185277
-            clientSecret: 42ffe5aa7379e8326387e0fe16f34132
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - public_profile
+            clientSecret: <your-client-secret>
+            clientId: <your-client-id>
           github:
-            clientId: d3e47fc2ddd966fa4352
-            clientSecret: 3bc0f6b8332f93076354c2a5bada2f5a05aea60d
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - user:email
-              - read:user
+            clientSecret: <your-client-secret>
+            clientId: <your-client-id>
+          google:
+            clientId: 613394712795-r40flit5sb9hj4s1uhniuvk7s7eenjd0.apps.googleusercontent.com
+            clientSecret: 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
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
         provider:
+          linkedin:
+            authorization-uri: https://www.linkedin.com/oauth/v2/authorization
+            token-uri: https://www.linkedin.com/oauth/v2/accessToken
+            user-info-uri: https://api.linkedin.com/v2/me
+            user-name-attribute: id
           facebook:
-            authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
-            tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
-            userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email,picture
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    initialization-mode: always
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/medical
+    username: postgres
+    password: password
+
+    hikari:
+      maxLifetime: 2000000
+      poolName: SpringBootJPAHikariCP
+      connectionTimeout: 30000
+      idleTimeout: 30000
+      minimumIdle: 5
+      maximumPoolSize: 20
 app:
-  auth:
-    tokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
-    tokenExpirationMsec: 864000000
   cors:
-    allowedOrigins: http://localhost:3000,http://localhost:8080
+    allowedOrigins: http://localhost:4200,http://localhost:3000,http://localhost:8080
   oauth2:
-    # After successfully authenticating with the OAuth2 Provider,
-    # we'll be generating an auth token for the user and sending the token to the
-    # redirectUri mentioned by the client in the /oauth2/authorize request.
-    # We're not using cookies because they won't work well in mobile clients.
-    authorizedRedirectUris:
-      - http://localhost:3000/oauth2/redirect
-      - myandroidapp://oauth2/redirect
-      - myiosapp://oauth2/redirect
+    authorizedRedirectUris: http://localhost:4200/oauth2/redirect,http://localhost:8081/oauth2/redirect,myandroidapp://oauth2/redirect,myiosapp://oauth2/redirect
+  auth:
+    tokenExpirationMsec: '864000000'
+    tokenSecret: 04ca067b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
+linkedin:
+  email-address-uri: https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))
+
+loggin:
+  level:
+    org:
+      springframework: INFO
+      hibernate:
+        SQL: TRACE
+        type: TRACE

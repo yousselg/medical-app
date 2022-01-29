@@ -1,0 +1,36 @@
+version: '3.1'
+services:
+  app:
+    container_name: medical-app
+    image: medical-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    network_mode: bridge
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/medical
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      - dbpostgresql
+    links:
+      - dbpostgresql
+
+  dbpostgresql:
+    image: postgres
+    network_mode: bridge
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=medical
+
+volumes:
+  postgres-data:
