@@ -23,6 +23,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.createam-labs</groupId>
+            <artifactId>spring-boot-starter-heroku</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.medical</groupId>
             <artifactId>medical-security</artifactId>
             <version>${project.version}</version>

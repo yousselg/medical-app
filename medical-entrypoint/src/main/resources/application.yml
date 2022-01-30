@@ -68,6 +68,9 @@ app:
 linkedin:
   email-address-uri: https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))
 
+heroku:
+  enforceHttps: true
+
 loggin:
   level:
     org:
