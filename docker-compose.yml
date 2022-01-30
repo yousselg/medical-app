@@ -19,7 +19,7 @@ services:
       - dbpostgresql
 
   dbpostgresql:
-    image: postgres
+    image: postgres:latest
     network_mode: bridge
     volumes:
       - postgres-data:/var/lib/postgresql/data
